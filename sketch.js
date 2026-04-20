@@ -39,11 +39,30 @@ function draw() {
 
   // 如果繪圖層已建立，則繪製在影像上方
   if (pg) {
-    // 你可以在 pg 內部進行繪圖，例如繪製裝飾圖形或文字
     pg.clear(); // 保持背景透明
-    pg.fill(255, 255, 0);
+    capture.loadPixels(); // 載入攝影機像素資料
+    
+    let stepSize = 20; // 設定單位大小為 20x20
+    pg.textAlign(CENTER, CENTER);
+    pg.textSize(8);
     pg.noStroke();
-    pg.ellipse(pg.width / 2, pg.height / 2, 50, 50); // 在 pg 的中心點畫一個圓
+
+    // 遍歷攝影機影像的像素
+    for (let py = 0; py < capture.height; py += stepSize) {
+      for (let px = 0; px < capture.width; px += stepSize) {
+        // 計算該坐標在 pixels 陣列中的索引位置 (RGBA 四個值為一組)
+        let index = (px + py * capture.width) * 4;
+        
+        let r = capture.pixels[index];
+        let g = capture.pixels[index + 1];
+        let b = capture.pixels[index + 2];
+        let avg = floor((r + g + b) / 3); // 計算平均值
+
+        // 在對應位置顯示數值
+        pg.fill(255); // 使用白色文字顯示
+        pg.text(avg, px + stepSize / 2, py + stepSize / 2);
+      }
+    }
 
     // 將繪圖層以同樣的比例與座標繪製在影像上方
     image(pg, x, y, videoW, videoH);
