@@ -23,9 +23,14 @@ function draw() {
   let x = (width - videoW) / 2;
   let y = (height - videoH) / 2;
 
-  // 在畫布中央繪製攝影機影像
-  // 注意：這會根據 60% 的比例進行縮放，可能會改變影像原始比例
+  // 修正左右顛倒問題
+  push();
+  // 將原點移至畫布右側，並水平翻轉座標系
+  translate(width, 0);
+  scale(-1, 1);
+  // 在翻轉後的座標系中繪製影像
   image(capture, x, y, videoW, videoH);
+  pop();
 }
 
 // 當瀏覽器視窗大小改變時，自動調整畫布大小
